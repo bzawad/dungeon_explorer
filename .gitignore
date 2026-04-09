@@ -44,6 +44,9 @@ npm-debug.log
 # Secrets
 /config/*.secret.exs
 
+# Gigalixir CLI scripts read this locally; do not commit real app names
+/gigalixir/prod/app_name.txt
+
 # Local env and direnv (never commit real secrets)
 .env
 .env.*
