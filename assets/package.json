@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "@heroicons/react": "^2.0.18",
+        "daisyui": "latest",
+        "howler": "^2.2.4"
+    }
+}

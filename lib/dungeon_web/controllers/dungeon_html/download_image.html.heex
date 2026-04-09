@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dungeon Map - Download PNG</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        font-family: Arial, sans-serif;
+        overflow-x: auto;
+        overflow-y: auto;
+      }
+
+      .controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: rgba(0,0,0,0.9);
+        padding: 15px;
+        border-radius: 8px;
+        color: white;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      }
+
+      .btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        margin: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+      }
+
+      .btn:hover {
+        background: #0056b3;
+      }
+
+      .btn-success {
+        background: #28a745;
+      }
+
+      .btn-success:hover {
+        background: #218838;
+      }
+
+      .btn img {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+      }
+
+      .dungeon-container {
+        display: inline-block;
+        background: #000;
+        padding: 0;
+        margin: 20px;
+      }
+
+      .map-row {
+        display: flex;
+        height: 140px;
+        line-height: 0;
+      }
+
+      .map-cell {
+        width: 140px;
+        height: 140px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+        border: none;
+      }
+
+      /* Background textures */
+      .background-texture {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+      }
+
+      .background-floor {
+        opacity: 0.85;
+      }
+
+      .background-corridor {
+        opacity: 0.85;
+      }
+
+      .background-wall {
+        opacity: 1;
+      }
+
+      .background-stair {
+        opacity: 1;
+      }
+
+      /* Foreground elements */
+      .foreground-element {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+      }
+
+      /* No default sizing for foreground images - use inline styles for proper scaling */
+
+      /* Labels - match browser styling */
+      .room-label,
+      .corridor-label,
+      .area-label {
+        font-size: 40px;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        z-index: 20;
+      }
+
+      .stair-overlay {
+        font-size: 55px;
+        font-weight: bold;
+        color: #16a34a; /* green-600 */
+        text-align: center;
+        z-index: 20;
+      }
+
+      .stair-label {
+        font-size: 55px;
+        font-weight: bold;
+        color: #16a34a; /* green-600 */
+        text-align: center;
+        z-index: 20;
+      }
+
+      /* Door overlays */
+      .door-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 15;
+      }
+
+      .door-overlay img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+      }
+
+      /* Lock and trap icons */
+      .lock-icon {
+        position: absolute;
+        top: 20%;
+        right: 20%;
+        z-index: 25;
+      }
+
+      .lock-icon img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+      }
+
+      .trap-icon {
+        position: absolute;
+        bottom: 20%;
+        left: 20%;
+        z-index: 25;
+      }
+
+      .trap-icon img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+      }
+
+      /* Door barriers (black rectangles) */
+      .door-barrier-north {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background-color: black;
+        z-index: 5;
+      }
+
+      .door-barrier-south {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background-color: black;
+        z-index: 5;
+      }
+
+      .door-barrier-east {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        background-color: black;
+        z-index: 5;
+      }
+
+      .door-barrier-west {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        background-color: black;
+        z-index: 5;
+      }
+
+      /* Door icon overlays positioned on black barriers */
+      .door-icon-north {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 25;
+      }
+
+      .door-icon-south {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 25;
+      }
+
+      .door-icon-east {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 25;
+      }
+
+      .door-icon-west {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 25;
+      }
+
+      .door-icon-north img,
+      .door-icon-south img,
+      .door-icon-east img,
+      .door-icon-west img {
+        width: 45px;
+        height: 45px;
+        object-fit: contain;
+      }
+
+      /* Styles for dual icons (lock + trap) */
+      .door-dual-icon-start {
+        position: absolute;
+        z-index: 25;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .door-dual-icon-end {
+        position: absolute;
+        z-index: 25;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .door-dual-icon-start img,
+      .door-dual-icon-end img {
+        width: 45px;
+        height: 45px;
+        object-fit: contain;
+      }
+
+      /* Instructions */
+      .instructions {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(0,0,0,0.9);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        max-width: 300px;
+        font-size: 14px;
+        z-index: 1000;
+      }
+
+      .status {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 4px;
+        display: none;
+      }
+
+      .status.success {
+        background: rgba(40, 167, 69, 0.9);
+        color: white;
+      }
+
+      .status.error {
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <button onclick="downloadImage()" class="btn btn-success" id="downloadBtn">
+        <img src="/images/down_arrow.png" alt="Download" /> Download PNG
+      </button>
+      <a href="/dungeon/download_image" class="btn">
+        <img src="/images/reset.png" alt="Reset" /> Generate New Map
+      </a>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="instructions">
+      <strong>Download Instructions:</strong>
+      <br />
+      Click "Download PNG" to save a high-resolution image (140x140 pixels per tile) perfect for Roll20 or other virtual tabletops.
+    </div>
+    
+<!-- Preview Map (visible) -->
+    <div class="dungeon-container" id="dungeonMap">
+      <%= for y <- 0..(@dungeon.height-1) do %>
+        <div class="map-row">
+          <%= for x <- 0..(@dungeon.width-1) do %>
+            <% tile = Map.get(@dungeon.grid, {x, y}) %>
+            <div class="map-cell">
+              <!-- Background layer -->
+              <%= cond do %>
+                <% tile in [:stair_up, :stair_down] or match?({:starting_stair, _}, tile) -> %>
+                  <img
+                    src={get_stair_tile_image(x, y, @dungeon.transition_theme)}
+                    alt="Stair texture"
+                    class="background-texture background-stair"
+                  />
+                <% tile == :wall -> %>
+                  <div
+                    class="background-texture background-wall"
+                    style={get_wall_tileset_style_for_png(x, y, @dungeon.wall_theme)}
+                  >
+                  </div>
+                <% tile == :shrub -> %>
+                  <div
+                    class="background-texture background-shrub"
+                    style={
+                      get_shrub_tileset_style_for_png(
+                        x,
+                        y,
+                        Map.get(@dungeon, :shrub_theme, "green_shrubs.png")
+                      )
+                    }
+                  >
+                  </div>
+                <% tile in [:corridor, :road] or match?({:corridor_label, _}, tile) -> %>
+                  <div
+                    class="background-texture background-corridor"
+                    style={
+                      get_corridor_tileset_style_for_png(
+                        x,
+                        y,
+                        Map.get(@dungeon, :road_theme, "dirt_and_grass.png"),
+                        @dungeon.floor_theme,
+                        @dungeon.generation_type
+                      )
+                    }
+                  >
+                  </div>
+                <% should_use_road_texture_for_png?(tile, x, y, @dungeon) -> %>
+                  <div
+                    class="background-texture background-corridor"
+                    style={
+                      get_road_tileset_style_for_png(
+                        x,
+                        y,
+                        Map.get(@dungeon, :road_theme, "dirt_and_grass.png")
+                      )
+                    }
+                  >
+                  </div>
+                <% should_use_floor_texture_for_png?(x, y, @dungeon) -> %>
+                  <div
+                    class="background-texture background-floor"
+                    style={get_floor_tileset_style_for_png(x, y, @dungeon.floor_theme)}
+                  >
+                  </div>
+                <% true -> %>
+                  <div
+                    class="background-texture background-floor"
+                    style={get_floor_tileset_style_for_png(x, y, @dungeon.floor_theme)}
+                  >
+                  </div>
+              <% end %>
+              
+<!-- Foreground elements -->
+              <%= case tile do %>
+                <% t when t in [:door, :locked_door, :trapped_door, :locked_trapped_door, :secret_door] -> %>
+                  <% door_orientation = get_door_orientation(@dungeon.grid, x, y, tile) %>
+                  <!-- Door barrier (black rectangle) -->
+                  <%= case door_orientation do %>
+                    <% :north -> %>
+                      <div class="door-barrier-north"></div>
+                    <% :south -> %>
+                      <div class="door-barrier-south"></div>
+                    <% :east -> %>
+                      <div class="door-barrier-east"></div>
+                    <% :west -> %>
+                      <div class="door-barrier-west"></div>
+                    <% _ -> %>
+                      <div class="door-barrier-east"></div>
+                  <% end %>
+                  
+<!-- Door icons/overlays -->
+                  <%= case tile do %>
+                    <% :door -> %>
+                      <!-- No overlays for regular doors -->
+                    <% :locked_door -> %>
+                      <%= case door_orientation do %>
+                        <% :north -> %>
+                          <div class="door-icon-north">
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                        <% :south -> %>
+                          <div class="door-icon-south">
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                        <% :east -> %>
+                          <div class="door-icon-east">
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                        <% _ -> %>
+                          <div class="door-icon-west">
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                      <% end %>
+                    <% :trapped_door -> %>
+                      <%= case door_orientation do %>
+                        <% :north -> %>
+                          <div class="door-icon-north">
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                        <% :south -> %>
+                          <div class="door-icon-south">
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                        <% :east -> %>
+                          <div class="door-icon-east">
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                        <% _ -> %>
+                          <div class="door-icon-west">
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                      <% end %>
+                    <% :locked_trapped_door -> %>
+                      <%= case door_orientation do %>
+                        <% :north -> %>
+                          <div
+                            class="door-dual-icon-start"
+                            style="top: 0; left: 0; right: 0; height: 50%; padding-left: 2px;"
+                          >
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                          <div
+                            class="door-dual-icon-end"
+                            style="top: 0; left: 0; right: 0; height: 50%; padding-right: 2px;"
+                          >
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                        <% :south -> %>
+                          <div
+                            class="door-dual-icon-start"
+                            style="bottom: 0; left: 0; right: 0; height: 50%; padding-left: 2px;"
+                          >
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                          <div
+                            class="door-dual-icon-end"
+                            style="bottom: 0; left: 0; right: 0; height: 50%; padding-right: 2px;"
+                          >
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                        <% :east -> %>
+                          <div
+                            class="door-dual-icon-start"
+                            style="right: 0; top: 0; bottom: 0; width: 50%; padding-top: 2px;"
+                          >
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                          <div
+                            class="door-dual-icon-end"
+                            style="right: 0; top: 0; bottom: 0; width: 50%; padding-bottom: 2px;"
+                          >
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                        <% _ -> %>
+                          <div
+                            class="door-dual-icon-start"
+                            style="left: 0; top: 0; bottom: 0; width: 50%; padding-top: 2px;"
+                          >
+                            <img src="/images/lock.png" alt="Lock" />
+                          </div>
+                          <div
+                            class="door-dual-icon-end"
+                            style="left: 0; top: 0; bottom: 0; width: 50%; padding-bottom: 2px;"
+                          >
+                            <img src="/images/trap.png" alt="Trap" />
+                          </div>
+                      <% end %>
+                    <% :secret_door -> %>
+                      <%= case door_orientation do %>
+                        <% :north -> %>
+                          <div class="door-icon-north">
+                            <img src="/images/secret.png" alt="Secret Door" />
+                          </div>
+                        <% :south -> %>
+                          <div class="door-icon-south">
+                            <img src="/images/secret.png" alt="Secret Door" />
+                          </div>
+                        <% :east -> %>
+                          <div class="door-icon-east">
+                            <img src="/images/secret.png" alt="Secret Door" />
+                          </div>
+                        <% _ -> %>
+                          <div class="door-icon-west">
+                            <img src="/images/secret.png" alt="Secret Door" />
+                          </div>
+                      <% end %>
+                  <% end %>
+                <% :room_trap -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/trap.png"
+                      alt="Trap"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :treasure -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/chest.png"
+                      alt="Treasure"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :trapped_treasure -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/chest.png"
+                      alt="Trapped Treasure"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                  <div class="trap-icon" style="width: 45px; height: 45px;">
+                    <img src="/images/trap.png" alt="Trap" style="width: 45px; height: 45px;" />
+                  </div>
+                <% :torch -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/torch.png"
+                      alt="Torch"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :bread -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/bread.png"
+                      alt="Bread"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :cheese -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/cheese.png"
+                      alt="Cheese"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :grapes -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/grapes.png"
+                      alt="Grapes"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :healing_potion -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/healing_potion.png"
+                      alt="Healing Potion"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :pile_of_bones -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/pile_of_bones.png"
+                      alt="Pile of Bones"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% :stair_up -> %>
+                  <div class="foreground-element stair-overlay">
+                    ↑
+                  </div>
+                <% :stair_down -> %>
+                  <div class="foreground-element stair-overlay">
+                    ↓
+                  </div>
+                <% {:starting_stair, stair_label} -> %>
+                  <div class="foreground-element stair-label">
+                    {stair_label}
+                  </div>
+                <% {:starting_waypoint, waypoint_label} -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/map_links/outdoor_waypoint1.png"
+                      alt="Starting Waypoint"
+                      style={"width: 140px; height: 140px; object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                  <div class="foreground-element stair-label">
+                    {waypoint_label}
+                  </div>
+                <% {:waypoint, waypoint_number} -> %>
+                  <div class="foreground-element">
+                    <img
+                      src={"/images/map_links/outdoor_waypoint#{waypoint_number}.png"}
+                      alt="Waypoint"
+                      style={"width: 140px; height: 140px; object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                <% {:encounter, _encounter_label, monster} -> %>
+                  <div style={get_monster_container_style_for_png(monster)}>
+                    <img
+                      src={"/images/monsters/#{monster.image}"}
+                      alt={monster.name}
+                      style={get_monster_image_size_for_png(monster) <> " object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                <% {:monster, monster_name} -> %>
+                  <!-- Surprise monster from special feature -->
+                  <%= case Dungeon.Monster.get_monster_by_name(monster_name) do %>
+                    <% nil -> %>
+                      <!-- Monster not found, show generic monster icon -->
+                      <div class="foreground-element">
+                        <img
+                          src="/images/monsters/goblin_scout.png"
+                          alt="Unknown Monster"
+                          style="width: 140px; height: 140px; object-fit: contain;"
+                        />
+                      </div>
+                    <% monster -> %>
+                      <div style={get_monster_container_style_for_png(monster)}>
+                        <img
+                          src={"/images/monsters/#{monster.image}"}
+                          alt={monster.name}
+                          style={get_monster_image_size_for_png(monster) <> " object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                        />
+                      </div>
+                  <% end %>
+                <% {:special_feature, _feature_label, feature_name} -> %>
+                  <% actual_feature_name = extract_feature_name(feature_name) %>
+                  <div style={get_feature_container_style_for_png(actual_feature_name)}>
+                    <img
+                      src={
+                        Dungeon.Generator.Features.get_special_feature_image_path(
+                          actual_feature_name
+                        )
+                      }
+                      alt={actual_feature_name}
+                      style={get_feature_image_size_for_png(actual_feature_name) <> " object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                <% {:room_label, room_number} -> %>
+                  <div class="foreground-element room-label">
+                    {room_number}
+                  </div>
+                <% {:corridor_label, corridor_number} -> %>
+                  <div class="foreground-element corridor-label">
+                    {corridor_number}
+                  </div>
+                <% {:area_label, area_number} -> %>
+                  <div class="foreground-element area-label">
+                    {area_number}
+                  </div>
+                <% {:building_label, building_number} -> %>
+                  <div class="foreground-element building-label">
+                    {building_number}
+                  </div>
+                <% {:cavern_entrance, entrance_number} -> %>
+                  <!-- Cavern entrance overlay -->
+                  <div style={get_map_link_container_style_for_png()}>
+                    <img
+                      src={"/images/map_links/cavern_entrance#{entrance_number}.png"}
+                      alt="Cavern Entrance"
+                      style={"width: 280px; height: 280px; object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                <% {:dungeon_entrance, entrance_number} -> %>
+                  <!-- Dungeon entrance overlay -->
+                  <div style={get_map_link_container_style_for_png()}>
+                    <img
+                      src={"/images/map_links/dungeon_entrance#{entrance_number}.png"}
+                      alt="Dungeon Entrance"
+                      style={"width: 280px; height: 280px; object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                <% {:cavern_exit, exit_number} -> %>
+                  <!-- Cavern exit overlay -->
+                  <div style={get_map_link_container_style_for_png()}>
+                    <img
+                      src={"/images/map_links/cavern_exit#{exit_number}.png"}
+                      alt="Cavern Exit"
+                      style={"width: 280px; height: 280px; object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                <% {:dungeon_exit, exit_number} -> %>
+                  <!-- Dungeon exit overlay -->
+                  <div style={get_map_link_container_style_for_png()}>
+                    <img
+                      src={"/images/map_links/dungeon_exit#{exit_number}.png"}
+                      alt="Dungeon Exit"
+                      style={"width: 280px; height: 280px; object-fit: contain;" <> get_image_flip_style_for_png(x, y, @dungeon.grid)}
+                    />
+                  </div>
+                <% {:quest_item, _quest_item_data} -> %>
+                  <div class="foreground-element">
+                    <img
+                      src="/images/special_item.png"
+                      alt="Quest Item"
+                      style="width: 140px; height: 140px; object-fit: contain;"
+                    />
+                  </div>
+                <% _ -> %>
+                  <!-- No foreground element -->
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <script>
+      function extractTileFromHTML(cell) {
+        // Door barriers and overlays
+        const overlays = [];
+        
+        // Check for door barriers
+        const doorBarrierNorth = cell.querySelector('.door-barrier-north');
+        const doorBarrierSouth = cell.querySelector('.door-barrier-south');
+        const doorBarrierEast = cell.querySelector('.door-barrier-east');
+        const doorBarrierWest = cell.querySelector('.door-barrier-west');
+        
+        let doorOrientation = null;
+        if (doorBarrierNorth) doorOrientation = 'north';
+        else if (doorBarrierSouth) doorOrientation = 'south';
+        else if (doorBarrierEast) doorOrientation = 'east';
+        else if (doorBarrierWest) doorOrientation = 'west';
+        
+        if (doorOrientation) {
+          // Add door barrier overlay
+          overlays.push({type: "door_barrier", orientation: doorOrientation});
+          
+          // Check for door icons
+          const doorIconClass = `.door-icon-${doorOrientation}`;
+          const doorIcon = cell.querySelector(doorIconClass);
+          if (doorIcon) {
+            const iconImg = doorIcon.querySelector('img');
+            if (iconImg) {
+              overlays.push({
+                type: "door_icon", 
+                orientation: doorOrientation,
+                iconPath: iconImg.src
+              });
+            }
+          }
+          
+          // Check for dual icons (lock + trap)
+          const dualIconStart = cell.querySelector('.door-dual-icon-start');
+          const dualIconEnd = cell.querySelector('.door-dual-icon-end');
+          
+          if (dualIconStart) {
+            const iconImg = dualIconStart.querySelector('img');
+            if (iconImg) {
+              overlays.push({
+                type: "door_dual_icon", 
+                orientation: doorOrientation,
+                position: "start",
+                iconPath: iconImg.src
+              });
+            }
+          }
+          
+          if (dualIconEnd) {
+            const iconImg = dualIconEnd.querySelector('img');
+            if (iconImg) {
+              overlays.push({
+                type: "door_dual_icon", 
+                orientation: doorOrientation,
+                position: "end",
+                iconPath: iconImg.src
+              });
+            }
+          }
+        }
+        if (cell.querySelector('img[src*="monsters"]')) {
+          const img = cell.querySelector('img[src*="monsters"]');
+          const imageName = img.src.split('/').pop();
+          overlays.push({type: "monster", image: imageName});
+        }
+        if (cell.querySelector('img[src*="special_features"]')) {
+          const img = cell.querySelector('img[src*="special_features"]');
+          const imageName = img.src.split('/').pop().replace('.png', '');
+          overlays.push({type: "special_feature", feature_name: imageName});
+        }
+        if (cell.querySelector('img[src*="waypoints"]')) {
+          const img = cell.querySelector('img[src*="waypoints"]');
+          const imagePath = img.src;
+          overlays.push({type: "waypoint", imagePath: imagePath});
+        }
+        if (cell.querySelector('.stair-overlay')) {
+          const arrow = cell.querySelector('.stair-overlay').textContent.trim();
+          overlays.push({type: "stair_arrow", value: arrow});
+        }
+        if (cell.querySelector('.stair-label')) {
+          const label = cell.querySelector('.stair-label').textContent.trim();
+          overlays.push({type: "stair_label", value: label});
+        }
+        if (cell.querySelector('.room-label')) {
+          const number = cell.querySelector('.room-label').textContent.trim();
+          overlays.push({type: "room_label", number: number});
+        }
+        if (cell.querySelector('.corridor-label')) {
+          const number = cell.querySelector('.corridor-label').textContent.trim();
+          overlays.push({type: "corridor_label", number: number});
+        }
+        if (cell.querySelector('.area-label')) {
+          const number = cell.querySelector('.area-label').textContent.trim();
+          overlays.push({type: "area_label", number: number});
+        }
+        if (cell.querySelector('img[src*="chest"]')) {
+          overlays.push({type: "treasure"});
+        }
+        if (cell.querySelector('img[src*="torch"]')) {
+          overlays.push({type: "torch"});
+        }
+        if (cell.querySelector('img[src*="bread"]')) {
+          overlays.push({type: "bread"});
+        }
+        if (cell.querySelector('img[src*="cheese"]')) {
+          overlays.push({type: "cheese"});
+        }
+        if (cell.querySelector('img[src*="grapes"]')) {
+          overlays.push({type: "grapes"});
+        }
+        if (cell.querySelector('img[src*="healing_potion"]')) {
+          overlays.push({type: "healing_potion"});
+        }
+        if (cell.querySelector('img[src*="pile_of_bones"]')) {
+          overlays.push({type: "pile_of_bones"});
+        }
+        
+        // Extract background image and determine type
+        let bgType = {type: "atom", value: "floor"};
+        let bgImageSrc = null;
+        
+        // Helper function to extract background-image URL from style attribute
+        function extractBackgroundImageUrl(element) {
+          if (!element || !element.style) return null;
+          const style = element.style.backgroundImage;
+          if (!style) return null;
+          const match = style.match(/url\(['"]?([^'"]+)['"]?\)/);
+          return match ? match[1] : null;
+        }
+        
+        if (cell.querySelector('.background-wall')) {
+          bgType = {type: "atom", value: "wall"};
+          bgImageSrc = extractBackgroundImageUrl(cell.querySelector('.background-wall'));
+        } else if (cell.querySelector('.background-shrub')) {
+          bgType = {type: "atom", value: "shrub"};
+          bgImageSrc = extractBackgroundImageUrl(cell.querySelector('.background-shrub'));
+        } else if (cell.querySelector('.background-corridor')) {
+          bgType = {type: "atom", value: "corridor"};
+          bgImageSrc = extractBackgroundImageUrl(cell.querySelector('.background-corridor'));
+        } else if (cell.querySelector('.background-stair')) {
+          bgType = {type: "atom", value: "stair_up"};
+          // Stairs use img src, not background-image style
+          const stairImg = cell.querySelector('.background-stair');
+          bgImageSrc = stairImg ? stairImg.src : null;
+        } else if (cell.querySelector('.background-floor')) {
+          bgImageSrc = extractBackgroundImageUrl(cell.querySelector('.background-floor'));
+        }
+        
+        return {bgType, overlays, bgImageSrc};
+      }
+
+      function loadImage(src) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        });
+      }
+
+      // Tileset-based fallback functions (using default tilesets)
+      function getFloorTilesetImage(x, y) {
+        return `/images/tilesets/light_cobblestone.png`;
+      }
+      function getCorridorTilesetImage(x, y) {
+        return `/images/tilesets/light_cobblestone.png`;
+      }
+      function getWallTilesetImage(x, y) {
+        return `/images/tilesets/dark_cobblestone.png`;
+      }
+      function getShrubTilesetImage(x, y) {
+        return `/images/tilesets/green_shrubs.png`;
+      }
+      function getStairTileImage(x, y) {
+        const variations = [1,2,3,4];
+        const seed = x * 31 + y * 37;
+        const variation = variations[Math.abs(seed) % variations.length];
+        return `/images/map_links/dungeon_stairs${variation}.png`;
+      }
+
+      async function downloadImage() {
+        const downloadBtn = document.getElementById('downloadBtn');
+        const status = document.getElementById('status');
+        
+        // Disable button and show progress
+        downloadBtn.disabled = true;
+        downloadBtn.textContent = 'Rendering...';
+        status.textContent = 'Starting map rendering...';
+        status.className = 'status success';
+        status.style.display = 'block';
+        
+        try {
+          const dungeonContainer = document.getElementById('dungeonMap');
+          const rows = dungeonContainer.querySelectorAll('.map-row');
+          const mapHeight = rows.length;
+          const mapWidth = rows[0] ? rows[0].querySelectorAll('.map-cell').length : 0;
+          const tileSize = 140;
+          const canvas = document.createElement('canvas');
+          canvas.width = mapWidth * tileSize;
+          canvas.height = mapHeight * tileSize;
+          const ctx = canvas.getContext('2d');
+
+          const totalTiles = mapHeight * mapWidth;
+          let processedTiles = 0;
+
+          for (let y = 0; y < mapHeight; y++) {
+            const row = rows[y];
+            const cells = row.querySelectorAll('.map-cell');
+            for (let x = 0; x < mapWidth; x++) {
+              const cell = cells[x];
+              const {bgType, overlays, bgImageSrc} = extractTileFromHTML(cell);
+              const canvasX = x * tileSize;
+              const canvasY = y * tileSize;
+              // Draw background using the actual image from HTML
+              let bgImg;
+              if (bgImageSrc) {
+                bgImg = await loadImage(bgImageSrc);
+              } else {
+                // Fallback based on bgType
+                if (bgType.value === "stair_up") {
+                  bgImg = await loadImage(getStairTileImage(x, y));
+                } else if (bgType.value === "wall") {
+                  bgImg = await loadImage(getWallTilesetImage(x, y));
+                } else if (bgType.value === "shrub") {
+                  bgImg = await loadImage(getShrubTilesetImage(x, y));
+                } else if (bgType.value === "corridor") {
+                  bgImg = await loadImage(getCorridorTilesetImage(x, y));
+                } else {
+                  // Default to floor tileset
+                  bgImg = await loadImage(getFloorTilesetImage(x, y));
+                }
+              }
+              ctx.drawImage(bgImg, canvasX, canvasY, tileSize, tileSize);
+              // Draw overlays in order
+              for (const overlay of overlays) {
+                if (overlay.type === 'door_barrier') {
+                  // Draw black barrier based on orientation
+                  ctx.fillStyle = 'black';
+                  if (overlay.orientation === 'north') {
+                    ctx.fillRect(canvasX, canvasY, tileSize, tileSize / 2);
+                  } else if (overlay.orientation === 'south') {
+                    ctx.fillRect(canvasX, canvasY + tileSize / 2, tileSize, tileSize / 2);
+                  } else if (overlay.orientation === 'east') {
+                    ctx.fillRect(canvasX + tileSize / 2, canvasY, tileSize / 2, tileSize);
+                  } else { // west or default
+                    ctx.fillRect(canvasX, canvasY, tileSize / 2, tileSize);
+                  }
+                } else if (overlay.type === 'door_icon') {
+                  // Draw lock/trap icons on the barrier
+                  const iconImg = await loadImage(overlay.iconPath);
+                  let iconX, iconY;
+                  const iconSize = 45;
+                  
+                  if (overlay.orientation === 'north') {
+                    iconX = canvasX + (tileSize - iconSize) / 2;
+                    iconY = canvasY + (tileSize / 2 - iconSize) / 2;
+                  } else if (overlay.orientation === 'south') {
+                    iconX = canvasX + (tileSize - iconSize) / 2;
+                    iconY = canvasY + tileSize / 2 + (tileSize / 2 - iconSize) / 2;
+                  } else if (overlay.orientation === 'east') {
+                    iconX = canvasX + tileSize / 2 + (tileSize / 2 - iconSize) / 2;
+                    iconY = canvasY + (tileSize - iconSize) / 2;
+                  } else { // west
+                    iconX = canvasX + (tileSize / 2 - iconSize) / 2;
+                    iconY = canvasY + (tileSize - iconSize) / 2;
+                  }
+                  
+                  ctx.drawImage(iconImg, iconX, iconY, iconSize, iconSize);
+                } else if (overlay.type === 'door_dual_icon') {
+                  // Draw dual icons (lock + trap) with proper positioning
+                  const iconImg = await loadImage(overlay.iconPath);
+                  const iconSize = 45;
+                  let iconX, iconY;
+                  
+                  if (overlay.orientation === 'north' || overlay.orientation === 'south') {
+                    const yBase = overlay.orientation === 'north' ? canvasY : canvasY + tileSize / 2;
+                    const yCenter = yBase + (tileSize / 2 - iconSize) / 2;
+                    if (overlay.position === 'start') {
+                      iconX = canvasX + 2; // left side with padding
+                    } else {
+                      iconX = canvasX + tileSize - iconSize - 2; // right side with padding
+                    }
+                    iconY = yCenter;
+                  } else { // east or west
+                    const xBase = overlay.orientation === 'east' ? canvasX + tileSize / 2 : canvasX;
+                    const xCenter = xBase + (tileSize / 2 - iconSize) / 2;
+                    if (overlay.position === 'start') {
+                      iconY = canvasY + 2; // top side with padding
+                    } else {
+                      iconY = canvasY + tileSize - iconSize - 2; // bottom side with padding
+                    }
+                    iconX = xCenter;
+                  }
+                  
+                  ctx.drawImage(iconImg, iconX, iconY, iconSize, iconSize);
+                } else if (overlay.type === 'monster') {
+                  const monsterImg = await loadImage(`/images/monsters/${overlay.image}`);
+                  ctx.drawImage(monsterImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'special_feature') {
+                  const featureImg = await loadImage(`/images/special_features/${overlay.feature_name}.png`);
+                  ctx.drawImage(featureImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'waypoint') {
+                  const waypointImg = await loadImage(overlay.imagePath);
+                  ctx.drawImage(waypointImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'stair_arrow') {
+                  ctx.fillStyle = '#16a34a';
+                  ctx.font = 'bold 55px Arial';
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'middle';
+                  ctx.fillText(overlay.value, canvasX + tileSize/2, canvasY + tileSize/2);
+                } else if (overlay.type === 'stair_label') {
+                  ctx.fillStyle = '#16a34a';
+                  ctx.font = 'bold 55px Arial';
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'middle';
+                  ctx.fillText(overlay.value, canvasX + tileSize/2, canvasY + tileSize/2);
+                } else if (overlay.type === 'room_label') {
+                  ctx.fillStyle = '#000000';
+                  ctx.font = 'bold 40px Arial';
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'middle';
+                  ctx.fillText(overlay.number, canvasX + tileSize/2, canvasY + tileSize/2);
+                } else if (overlay.type === 'corridor_label') {
+                  ctx.fillStyle = '#000000';
+                  ctx.font = 'bold 40px Arial';
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'middle';
+                  ctx.fillText(overlay.number, canvasX + tileSize/2, canvasY + tileSize/2);
+                } else if (overlay.type === 'area_label') {
+                  ctx.fillStyle = '#000000';
+                  ctx.font = 'bold 40px Arial';
+                  ctx.textAlign = 'center';
+                  ctx.textBaseline = 'middle';
+                  ctx.fillText(overlay.number, canvasX + tileSize/2, canvasY + tileSize/2);
+                } else if (overlay.type === 'treasure') {
+                  const treasureImg = await loadImage('/images/chest.png');
+                  ctx.drawImage(treasureImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'torch') {
+                  const torchImg = await loadImage('/images/torch.png');
+                  ctx.drawImage(torchImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'bread') {
+                  const breadImg = await loadImage('/images/bread.png');
+                  ctx.drawImage(breadImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'cheese') {
+                  const cheeseImg = await loadImage('/images/cheese.png');
+                  ctx.drawImage(cheeseImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'grapes') {
+                  const grapesImg = await loadImage('/images/grapes.png');
+                  ctx.drawImage(grapesImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'healing_potion') {
+                  const potionImg = await loadImage('/images/healing_potion.png');
+                  ctx.drawImage(potionImg, canvasX + 20, canvasY + 20, 100, 100);
+                } else if (overlay.type === 'pile_of_bones') {
+                  const bonesImg = await loadImage('/images/pile_of_bones.png');
+                  ctx.drawImage(bonesImg, canvasX + 20, canvasY + 20, 100, 100);
+                }
+              }
+              
+              // Update progress
+              processedTiles++;
+              const progress = Math.round((processedTiles / totalTiles) * 100);
+              status.textContent = `Rendering map... ${progress}%`;
+            }
+          }
+          
+          // Download the canvas
+          status.textContent = 'Preparing download...';
+          const link = document.createElement('a');
+          link.download = `dungeon-map-${new Date().getTime()}.png`;
+          link.href = canvas.toDataURL('image/png');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Show success message
+          status.textContent = 'Download complete!';
+          status.className = 'status success';
+          
+        } catch (error) {
+          console.error('Error generating PNG:', error);
+          status.textContent = 'Error generating PNG. Please try again.';
+          status.className = 'status error';
+        } finally {
+          // Re-enable button
+          downloadBtn.disabled = false;
+          downloadBtn.innerHTML = '<img src="/images/down_arrow.png" alt="Download" /> Download PNG';
+          
+          // Hide status after a delay
+          setTimeout(() => {
+            status.style.display = 'none';
+          }, 3000);
+        }
+      }
+
+      window.downloadImage = downloadImage;
+    </script>
+  </body>
+</html>

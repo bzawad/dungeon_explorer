@@ -1,0 +1,477 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* This file is for your main application CSS */
+
+/* CSS Custom Properties for UI Sizing */
+:root {
+    --tile-size-mobile: 48px;
+    --tile-size-desktop: 48px;
+    --small-icon-size: 2rem;
+    /* 32px - Tailwind w-8 h-8 (doubled from 16px) */
+    --medium-icon-size: 3rem;
+    /* 48px - Tailwind w-12 h-12 (doubled from 24px) */
+    --large-icon-size: 8rem;
+    /* 128px - Tailwind w-32 h-32 (doubled from 64px) */
+}
+
+/* Mobile-first responsive dungeon map */
+@media (max-width: 768px) {
+
+    /* Prevent horizontal scroll */
+    body,
+    html {
+        overflow-x: hidden;
+    }
+
+    .dungeon-map {
+        /* Enable smooth scrolling for mobile viewport navigation */
+        scroll-behavior: smooth;
+        /* Optimize for touch */
+        touch-action: manipulation;
+        /* Prevent text selection during touch gestures */
+        -webkit-user-select: none;
+        user-select: none;
+        /* Remove container styling for mobile */
+        background: transparent !important;
+        padding: 0.25rem !important;
+        border-radius: 0 !important;
+        /* Center on screen */
+        margin: 0 auto;
+        /* Fit content properly */
+        width: fit-content;
+        max-width: calc(100vw - 1rem);
+    }
+
+    /* Make mobile tiles larger and more touch friendly */
+    .dungeon-tile {
+        width: var(--tile-size-mobile) !important;
+        height: var(--tile-size-mobile) !important;
+        font-size: 12px !important;
+        border-width: 0 !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Scale up icons within tiles for mobile (but not background textures) */
+    .dungeon-tile img:not(.tile-background):not([class*="w-[48px]"]):not([class*="w-[96px]"]):not([class*="w-[144px]"]):not([class*="w-[192px]"]):not([class*="w-[240px]"]) {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    /* Scale up smaller icons appropriately */
+    .dungeon-tile img[class*="w-[12px]"] {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    /* Allow special features to maintain their size-based scaling on mobile */
+    .dungeon-tile img[class*="w-[24px]"] {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    .dungeon-tile img[class*="w-[36px]"] {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .dungeon-tile img[class*="w-[48px]"] {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    .dungeon-tile img[class*="w-[96px]"] {
+        width: 96px !important;
+        height: 96px !important;
+    }
+
+    .dungeon-tile img[class*="w-[144px]"] {
+        width: 144px !important;
+        height: 144px !important;
+    }
+
+    .dungeon-tile img[class*="w-[192px]"] {
+        width: 192px !important;
+        height: 192px !important;
+    }
+
+    .dungeon-tile img[class*="w-[240px]"] {
+        width: 240px !important;
+        height: 240px !important;
+    }
+
+    /* Ensure buttons are touch-friendly but not too big */
+    .btn {
+        min-height: 40px;
+        padding: 0.375rem 0.75rem;
+        touch-action: manipulation;
+        font-size: 0.875rem;
+    }
+
+    /* Optimize select dropdown for mobile */
+    .select {
+        min-height: 40px;
+        font-size: 16px;
+        /* Prevent zoom on iOS */
+        text-align: center;
+        text-align-last: center;
+        line-height: 1.2;
+        padding: 0.5rem 0.75rem;
+        vertical-align: middle;
+    }
+
+    /* Better spacing for mobile controls */
+    .space-y-3>*+* {
+        margin-top: 0.75rem;
+    }
+
+    .gap-3 {
+        gap: 0.5rem;
+    }
+}
+
+/* Custom styles for mobile mode indicator */
+.mobile-indicator {
+    background-color: #2563eb;
+    color: #ffffff;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+/* Special feature size-based styling */
+.dungeon-tile {
+    /* Allow larger special features to overflow gracefully */
+    overflow: visible;
+}
+
+/* Ensure larger special features and monsters maintain proper layering */
+.dungeon-tile [class*="overflow-visible"] {
+    z-index: 25;
+}
+
+/* Viewport navigation controls */
+.viewport-controls {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 8px;
+}
+
+/* Touch-optimized dialog styling */
+@media (max-width: 768px) {
+    .modal-box {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
+        max-height: calc(100vh - 4rem);
+    }
+
+    /* Larger close buttons for touch */
+    .btn-circle {
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+/* Allow normal scrolling */
+body {
+    position: static;
+    overflow: auto;
+}
+
+#app-container {
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Prevent text selection on the dungeon map and enable scrolling */
+.dungeon-map,
+#dungeon-map {
+    /* Prevent text/grid selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    /* Enable smooth scrolling */
+    scroll-behavior: smooth;
+
+    /* Optimize for touch devices */
+    touch-action: manipulation;
+
+    /* Make it scrollable when content overflows */
+    overflow: auto;
+
+    /* Add subtle cursor hint that this area is interactive */
+    cursor: grab;
+}
+
+/* Reset cursor for UI elements within the dungeon map */
+.dungeon-map button,
+.dungeon-map .btn,
+#dungeon-map button,
+#dungeon-map .btn,
+.dungeon-map button:hover,
+.dungeon-map .btn:hover,
+#dungeon-map button:hover,
+#dungeon-map .btn:hover {
+    cursor: pointer !important;
+}
+
+/* Specific override for character dashboard buttons */
+.character-dashboard button,
+.character-dashboard .btn,
+.character-dashboard button:hover,
+.character-dashboard .btn:hover {
+    cursor: pointer !important;
+}
+
+/* Reset cursor for the entire character dashboard area */
+.character-dashboard {
+    cursor: default !important;
+}
+
+/* Change cursor when actively dragging/scrolling */
+.dungeon-map:active,
+#dungeon-map:active {
+    cursor: grabbing;
+}
+
+/* Prevent selection on all dungeon tiles */
+.dungeon-tile {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    /* Prevent drag on images */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}
+
+/* Prevent selection and dragging on all images within the map */
+.dungeon-map img,
+#dungeon-map img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+
+    /* Prevent context menu on right-click */
+    pointer-events: none;
+}
+
+/* But allow pointer events on the container for clicking */
+.dungeon-map .dungeon-tile,
+#dungeon-map>div>div {
+    pointer-events: auto;
+}
+
+/* Smooth transitions for mobile mode toggles */
+.dungeon-map {
+    transition: all 0.3s ease;
+}
+
+/* High contrast mode for better visibility */
+@media (prefers-contrast: high) {
+    .border-gray-600 {
+        border-color: #000 !important;
+    }
+
+    .bg-gray-300 {
+        background-color: #fff !important;
+    }
+
+    .bg-gray-400 {
+        background-color: #ccc !important;
+    }
+}
+
+/* Select dropdown vertical alignment fix */
+select.select {
+    text-align: center;
+    text-align-last: center;
+    line-height: 1.2;
+    padding: 0.5rem 0.75rem;
+    vertical-align: middle;
+}
+
+/* Ensure option elements are also centered */
+select.select option {
+    text-align: center;
+}
+
+/* Combat attack animations */
+@keyframes attack-bounce {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes damage-overlay {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+.animate-attack-bounce {
+    animation: attack-bounce 0.6s ease-in-out;
+}
+
+.animate-damage-overlay {
+    animation: damage-overlay 0.8s ease-in-out;
+}
+
+/* Quest glow effects */
+@keyframes quest-glow-lawful {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 1), 0 0 30px rgba(59, 130, 246, 0.8), 0 0 45px rgba(59, 130, 246, 0.6);
+    }
+}
+
+@keyframes quest-glow-chaotic {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.6), 0 0 30px rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(239, 68, 68, 1), 0 0 30px rgba(239, 68, 68, 0.8), 0 0 45px rgba(239, 68, 68, 0.6);
+    }
+}
+
+.quest-glow-lawful {
+    animation: quest-glow-lawful 2s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+.quest-glow-chaotic {
+    animation: quest-glow-chaotic 2s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+/* Fog opacity utilities for dungeon tiles */
+.fog-dim {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.fog-dark {
+    background-color: rgb(0, 0, 0) !important;
+}
+
+.fog-daylight {
+    background-color: transparent !important;
+}
+
+/* Allow special feature images to overflow the grid cell */
+.dungeon-tile img.object-contain {
+    max-width: none !important;
+    max-height: none !important;
+}
+
+.dungeon-tile .overflow-visible {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+/* Pathfinding visual highlights */
+.pathfinding-destination {
+    position: relative;
+}
+
+.pathfinding-destination::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    border: 3px solid #10b981;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 20;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    animation: pulse-destination 1.5s ease-in-out infinite alternate;
+}
+
+.pathfinding-path {
+    position: relative;
+}
+
+.pathfinding-path::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 15;
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.8);
+    animation: pulse-path 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-destination {
+    0% {
+        border-color: #10b981;
+        box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    100% {
+        border-color: #34d399;
+        box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+    }
+}
+
+@keyframes pulse-path {
+    0% {
+        background-color: #3b82f6;
+        box-shadow: 0 0 4px rgba(59, 130, 246, 0.8);
+    }
+
+    100% {
+        background-color: #60a5fa;
+        box-shadow: 0 0 6px rgba(96, 165, 250, 1);
+    }
+}

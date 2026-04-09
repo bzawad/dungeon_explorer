@@ -1,0 +1,22 @@
+name,image,armor_class,hit_points,attack_bonus,damage_dice,weapon,treasure,rarity,size,role
+Rat,rat.png,10,1,0,1d1,Bite,,common,0.75,
+Spider,spider.png,11,1,1,1d1,Bite,,common,0.75,
+Goblin,goblin.png,11,5,0,1d4,Shortsword,1d4,common,0.75,
+Skeleton,skeleton.png,13,11,1,1d6,Scimitar,,uncommon,1.0,
+Zombie,zombie.png,8,11,2,1d6,Slam,,common,1.0,
+Ogre,ogre.png,12,20,3,2d6,Club,,common,2.0,
+Moeshrooom,moeshrooom.png,13,15,2,1d6,Slam,,uncommon,1.0,
+Lizard Dude,lizard_dude.png,14,11,2,1d6,Spear,1d6,uncommon,1.0,
+Orc,orc.png,15,4,2,1d8,Greataxe,1d6,uncommon,1.0,
+Orc Boss,orc_boss.png,17,10,3,1d12,Club,2d6,rare,1.25,
+Dark Elf,dark_elf.png,15,9,1,1d8,Rapier,2d6,rare,1.0,
+Possessed Head,possessed_head.png,16,15,4,1d10,Psychic Blast,2d6,rare,1.0,
+God Of All Multiverses,god_of_all_multiverses.png,18,20,5,2d12,Reality Warp,3d6,elite,1.5,
+Ant,ant.png,12,2,1,1d2,Mandibles,1d4,common,0.75,
+Blob Fish,blob_fish.png,9,8,0,1d4,Gooey Slap,,common,1.0,
+Evil Piggy,evil_piggy.png,12,7,1,1d6,Tusks,1d4,common,1.0,
+Scary Face,scary_face.png,14,12,3,1d8,Terror Scream,2d6,rare,1.5,
+Zombie Piggy,zombie_piggy.png,10,13,2,1d6,Rotting Bite,,uncommon,1.0,
+Merchant,merchant.png,10,5,0,1d2,Walking Stick,2d6,common,1.0,npc
+Innkeeper,innkeeper.png,10,5,0,1d2,Broom,1d6,common,1.0,npc
+Guard,guard.png,14,8,2,1d6,Spear,,common,1.0,guard

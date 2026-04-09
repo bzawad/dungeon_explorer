@@ -1,0 +1,11 @@
+name,description,category,rarity,type,consumable,uses,weapon_bonus,damage_bonus,armor_bonus,dexterity_bonus,wearable,wearable_slot,gold_value,xp_value
+Dagger of the Silent Step,This sleek dagger emits no sound when drawn or used, ideal for silent kills.,weapons,uncommon,magic,false,,1,1d6,,1,true,weapon,50,10
+Shadowweave Cloak,A dark, enchanted cloak that helps the wearer blend into the shadows.,armor,uncommon,magic,false,,,2,,true,back,90,18
+Ring of Evasion,This ring subtly enhances the wearer's agility, aiding in avoiding danger.,rings,uncommon,magic,false,,,,1,true,finger,70,14
+Whisperfang,A finely crafted shortsword enchanted to strike swiftly and silently. Ideal for backstabs.,weapons,rare,magic,false,2,1d6,,,true,weapon,110,22
+Ring of Protection,A silver ring inscribed with protective runes that ward off harm.,rings,rare,magic,false,,,1,,true,finger,120,20
+Leather of the Cat,This enchanted armor is silent as a shadow and allows greater freedom of movement.,armor,uncommon,magic,false,,,1,,true,torso,70,14
+Boots of Quiet Step,These soft-soled boots dampen all noise, aiding in stealth and escape.,armor,uncommon,magic,false,,,,1,true,feet,60,12
+Gloves of Lock Picking,Thin, nimble gloves enchanted to improve precision and tactile sensitivity.,miscellaneous,uncommon,magic,false,,,,1,true,hands,50,10
+Gloves of Dexterity,These enchanted gloves subtly boost the wearer's agility and sleight of hand.,armor,rare,magic,false,1,,,2,true,hands,90,18
+Bag of Holding,A magical satchel that can hold far more than its size would suggest.,containers,rare,magic,false,,,,,true,container,200,30 

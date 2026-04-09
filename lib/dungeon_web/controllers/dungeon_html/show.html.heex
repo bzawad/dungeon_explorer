@@ -1,0 +1,207 @@
+<div class="hero min-h-[80vh] bg-base-100 dark:bg-black">
+  <div class="hero-content text-center">
+    <div>
+      <h1 class="text-4xl font-bold text-white mb-8">Welcome to the Dungeon!</h1>
+
+      <div class="dungeon-map inline-block bg-gray-900 p-4 rounded-lg">
+        <%= for y <- 0..(@dungeon.height-1) do %>
+          <div class="flex h-[15px]">
+            <%= for x <- 0..(@dungeon.width-1) do %>
+              <% tile = Map.get(@dungeon.grid, {x, y}) %>
+              <div class={"w-[15px] h-[15px] #{get_tile_border_class(@dungeon.generation_type)} relative bg-gray-900"}>
+                <!-- Background tile texture layer using tilesets -->
+                <%= cond do %>
+                  <% tile in [:floor, :stair_up, :stair_down, :room_trap, :treasure, :trapped_treasure, :torch, :bread, :cheese, :grapes, :healing_potion, {:room_label, "_"}] or match?({:room_label, _}, tile) -> %>
+                    <div
+                      class="absolute inset-0 w-full h-full opacity-75"
+                      style={get_floor_tileset_style(x, y, @dungeon.floor_theme)}
+                    >
+                    </div>
+                  <% tile in [:corridor, {:corridor_label, "_"}] or match?({:corridor_label, _}, tile) or match?({:encounter, _, _}, tile) or match?({:special_feature, _, _}, tile) -> %>
+                    <div
+                      class="absolute inset-0 w-full h-full opacity-75"
+                      style={
+                        get_corridor_tileset_style(
+                          x,
+                          y,
+                          Map.get(@dungeon, :road_theme, "dirt_and_grass.png"),
+                          @dungeon.floor_theme,
+                          @dungeon.generation_type
+                        )
+                      }
+                    >
+                    </div>
+                  <% tile == :wall -> %>
+                    <div
+                      class="absolute inset-0 w-full h-full"
+                      style={get_wall_tileset_style(x, y, @dungeon.wall_theme)}
+                    >
+                    </div>
+                  <% tile in [:door, :locked_door, :trapped_door, :locked_trapped_door] -> %>
+                    <div
+                      class="absolute inset-0 w-full h-full opacity-75"
+                      style={get_floor_tileset_style(x, y, @dungeon.floor_theme)}
+                    >
+                    </div>
+                  <% tile == :road -> %>
+                    <div
+                      class="absolute inset-0 w-full h-full"
+                      style={
+                        get_road_tileset_style(
+                          x,
+                          y,
+                          Map.get(@dungeon, :road_theme, "dirt_and_grass.png")
+                        )
+                      }
+                    >
+                    </div>
+                  <% tile == :shrub -> %>
+                    <div
+                      class="absolute inset-0 w-full h-full"
+                      style={
+                        get_shrub_tileset_style(
+                          x,
+                          y,
+                          Map.get(@dungeon, :shrub_theme, "green_shrubs.png")
+                        )
+                      }
+                    >
+                    </div>
+                  <% true -> %>
+                    <!-- No background texture for other tile types -->
+                <% end %>
+
+                <%= case tile do %>
+                  <% {:room_label, room_number} -> %>
+                    <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-black">
+                      {room_number}
+                    </span>
+                  <% {:corridor_label, corridor_number} -> %>
+                    <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-black">
+                      {corridor_number}
+                    </span>
+                  <% {:area_label, area_number} -> %>
+                    <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-black">
+                      {area_number}
+                    </span>
+                  <% :door -> %>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <img
+                        src={get_door_image(x, y)}
+                        alt="Door"
+                        class="w-[12px] h-[12px] object-contain"
+                      />
+                    </div>
+                  <% :locked_door -> %>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <img
+                        src={get_door_image(x, y)}
+                        alt="Door"
+                        class="w-[12px] h-[12px] object-contain"
+                      />
+                      <img
+                        src="/images/lock.png"
+                        alt="Lock"
+                        class="absolute w-[8px] h-[8px] object-contain"
+                      />
+                    </div>
+                  <% :trapped_door -> %>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <img
+                        src={get_door_image(x, y)}
+                        alt="Door"
+                        class="w-[12px] h-[12px] object-contain"
+                      />
+                      <img
+                        src="/images/trap.png"
+                        alt="Trap"
+                        class="absolute w-[8px] h-[8px] object-contain"
+                      />
+                    </div>
+                  <% :locked_trapped_door -> %>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <img
+                        src={get_door_image(x, y)}
+                        alt="Door"
+                        class="w-[12px] h-[12px] object-contain"
+                      />
+                      <img
+                        src="/images/lock.png"
+                        alt="Lock"
+                        class="absolute w-[8px] h-[8px] object-contain top-0 left-0"
+                      />
+                      <img
+                        src="/images/trap.png"
+                        alt="Trap"
+                        class="absolute w-[8px] h-[8px] object-contain bottom-0 right-0"
+                      />
+                    </div>
+                  <% :secret_door -> %>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <img
+                        src={get_door_image(x, y)}
+                        alt="Door"
+                        class="w-[12px] h-[12px] object-contain"
+                      />
+                      <img
+                        src="/images/secret.png"
+                        alt="Secret Door"
+                        class="absolute w-[8px] h-[8px] object-contain"
+                      />
+                    </div>
+                  <% :stair_up -> %>
+                    <!-- Stair background tile -->
+                    <img
+                      src={get_stair_tile_image(x, y, @dungeon.transition_theme)}
+                      alt="Stair Tile"
+                      class="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <span class="absolute inset-0 flex items-center justify-center text-[8px] text-black font-bold">
+                      ↑
+                    </span>
+                  <% :stair_down -> %>
+                    <!-- Stair background tile -->
+                    <img
+                      src={get_stair_tile_image(x, y, @dungeon.transition_theme)}
+                      alt="Stair Tile"
+                      class="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <span class="absolute inset-0 flex items-center justify-center text-[8px] text-black font-bold">
+                      ↓
+                    </span>
+                  <% :torch -> %>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <img
+                        src="/images/torch.png"
+                        alt="Torch"
+                        class="w-[8px] h-[8px] object-contain"
+                      />
+                      <!-- Torch glow effect for static view -->
+                      <div
+                        class="absolute inset-0 pointer-events-none"
+                        style="animation: torch-flicker 0.8s ease-in-out infinite alternate; box-shadow: 0 0 6px 3px rgba(251,191,36,0.4), 0 0 12px 6px rgba(251,191,36,0.2);"
+                      >
+                      </div>
+                    </div>
+                  <% _ -> %>
+                <% end %>
+
+                <%= if match?(%{type: _, room: _}, tile) do %>
+                  <%= for {door_x, door_y} <- tile.room.doors do %>
+                    <%= if door_x == x and door_y == y do %>
+                      <div class="absolute inset-0 bg-black"></div>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <button class="btn btn-primary mt-4" onclick="window.location.reload()">
+        Generate New Dungeon
+      </button>
+    </div>
+  </div>
+</div>
