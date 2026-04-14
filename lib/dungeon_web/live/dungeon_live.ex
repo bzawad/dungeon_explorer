@@ -550,25 +550,31 @@ defmodule DungeonWeb.DungeonLive do
     {:noreply, assign(socket, :show_game_menu, show_menu)}
   end
 
-  def handle_event("keydown", %{"key" => key}, socket) do
-    # Block movement if any dialog is open or player is dead
-    if any_dialog_open?(socket) or socket.assigns.player_dead do
+  def handle_event("keydown", %{"key" => key} = params, socket) do
+    # OS key repeat sends extra keydown events while a key is held; ignore those so one step
+    # per physical press (combine with tap-to-move or later hold-to-step UX if desired).
+    if params["repeat"] == true do
       {:noreply, socket}
     else
-      case Movement.key_to_direction(key) do
-        {dx, dy} ->
-          # Interrupt any pathfinding movement when WASD is used
-          socket = Phoenix.LiveView.push_event(socket, "movement_interrupted", %{})
+      # Block movement if any dialog is open or player is dead
+      if any_dialog_open?(socket) or socket.assigns.player_dead do
+        {:noreply, socket}
+      else
+        case Movement.key_to_direction(key) do
+          {dx, dy} ->
+            # Interrupt any pathfinding movement when WASD is used
+            socket = Phoenix.LiveView.push_event(socket, "movement_interrupted", %{})
 
-          {:noreply, new_socket} = Movement.move_player_direction(socket, {dx, dy})
+            {:noreply, new_socket} = Movement.move_player_direction(socket, {dx, dy})
 
-          # Process monster turns after player movement
-          new_socket = MonsterTurnSystem.process_monster_turns(new_socket)
+            # Process monster turns after player movement
+            new_socket = MonsterTurnSystem.process_monster_turns(new_socket)
 
-          handle_movement_animation(socket, new_socket)
+            handle_movement_animation(socket, new_socket)
 
-        nil ->
-          {:noreply, socket}
+          nil ->
+            {:noreply, socket}
+        end
       end
     end
   end

@@ -1530,7 +1530,11 @@ let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
-  hooks: Hooks
+  hooks: Hooks,
+  // Forward key repeat so the server can ignore OS auto-repeat (avoids move spam on held WASD)
+  metadata: {
+    keydown: (e, _el) => ({ repeat: e.repeat })
+  }
 })
 
 // Touch gesture handling for mobile
