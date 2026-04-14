@@ -9,34 +9,30 @@ This project was created from scratch (the hard way), with AI-assisted code gene
 ## 🎮 Gameplay Features
 
 - 🧱 **Procedural Map Generation**
-  - Standard dungeons, caverns, outdoor wilderness, and ruins
-  - Room-level themes that define aesthetics and feature spawns
+  - Dungeons, caverns, outdoor, and cities
+  - **Map themes:** one named preset per generated area (wall/floor art, fog, monster and feature spawn tables); features spawn in rooms but do not use separate per-room themes
   - Traps, locked doors, fountains, bookshelves, statues, and more
 
 - 🌫️ **Fog of War & Light Radius**
-  - Darkness restricts vision in indoor areas
-  - Torches light a circular area; outdoor areas have full visibility
-  - Future: Torch inventory limits and magical light sources
+  - Each **theme** sets `fog_type` (`dark`, `dim`, or `daylight`); limited visibility and torch radius apply when the theme is not daylight
+  - Outdoor and some town themes use daylight-style visibility; many dungeons and caverns use dim or dark fog
 
 - ⚔️ **Turn-Based Combat**
   - One action per turn: move, attack, or interact
   - Surprise attacks, evasion rolls, combat log narration
-  - Future: Ranged weapons, spells, companions
 
 - 👁️ **Monsters & NPCs**
-  - About **100** monsters with stats, behaviors, and spawn conditions (defined in `lib/dungeon/monster.ex`)
-  - NPCs (e.g. merchants, innkeepers) provide services or rumors
-  - Hostile/friendly flag system for dialog vs combat
+  - **100** monster entries with stats, behaviors, and spawn conditions (defined in `lib/dungeon/monster.ex`)
+  - **`hunts_player?`** controls whether wandering monsters pursue the player; merchants, innkeepers, and similar use the same stat structs with encounter/dialog flows for services and rumors where applicable
 
 - 📜 **Quests & Rumors**
   - Special features may reveal a rumor to track down a named item
   - Quest completion gives powerful loot and XP
-  - Future: Procedural quest generation with more types and rewards
 
 - 💰 **Items & Inventory**
-  - Weapons, armor, rings, potions, food, torches, magical artifacts
-  - Wearable slots: hand, torso, finger, back, etc.
-  - Inventory limits with exceptions (e.g., Bag of Holding)
+  - Healing potions, food, torches, loot, and magic items; wearables and combat bonuses come from the special-item list (plus base attack/AC from talents and level)
+  - Wearable slots: weapon, torso, finger, back, container, etc.; the highest-XP item per slot counts for stats
+  - Collected magic items are stored in an open-ended list—there is no inventory cap or Bag of Holding overflow logic (the Bag is equippable in the container slot like other gear, not extra capacity)
 
 - 🗺️ **Map Print & PNG Export**
   - Printer-friendly and downloadable maps for VTT or archiving
@@ -46,8 +42,8 @@ This project was created from scratch (the hard way), with AI-assisted code gene
   - Audio feedback for combat, movement, item use, door actions, etc.
 
 - 💬 **LLM Integration (Optional)**
-  - Use a local [Ollama](https://ollama.com/) model to generate flavor text for encounters
-  - Set `OLLAMA_MODEL` (and optionally `OLLAMA_HOST`, `OLLAMA_PORT`); use `OLLAMA_MODEL=none` to disable LLM calls
+  - When enabled, a local [Ollama](https://ollama.com/) model can generate narrative text for encounters, rooms, quest beats, and related prompts (see `lib/dungeon/services/`)
+  - Set `OLLAMA_MODEL` (and optionally `OLLAMA_HOST`, `OLLAMA_PORT`); use `OLLAMA_MODEL=none` to skip network calls and use built-in fallbacks
 
 ---
 
@@ -58,7 +54,7 @@ This project was created from scratch (the hard way), with AI-assisted code gene
 3. **Fight monsters**, using attack, flee, or evade
 4. **Follow quests** from discovered rumors
 5. **Level up** with XP, gain talent boosts
-6. **Descend deeper**, survive longer, complete legendary quests!
+6. **Descend stairs, use waypoints, or follow map exits** to reach new themed areas and tougher foes
 
 ---
 
@@ -103,20 +99,19 @@ Now visit [`localhost:4000`](http://localhost:4000) in your browser! 🌐
   - Tile data includes fog, items, monster overlays, etc.
 
 - 📐 **Pathfinding**
-  - A* algorithm routes around obstacles for click-to-move
+  - A* pathfinding in the browser (`PathfindingHook` in `assets/js/app.js`) feeds click-to-move; server-side movement validates each step
 
 - 🔀 **Procedural Generation**
-  - Room templates, outdoor terrain, city layouts, etc.
-  - Themes determine what features and monsters spawn
-  - Multiple generator modules for different terrain types
+  - Traditional dungeons: random rectangular **rooms** and **corridors** (`generator/rooms.ex`, `corridors.ex`); separate flows for **caverns**, **outdoor**, and **cities**
+  - Map **themes** (from `themes.ex`) pick wall/floor art, fog style, and weighted monster/feature pools
+  - Shared **features** placement and terrain helpers under `lib/dungeon/generator/`
 
 - 🔊 **Audio System**
   - Sound effects for combat, movement, items, and exploration
   - MP3 audio files triggered by game events
 
 - 🤖 **Optional AI Support**
-  - LLM prompts for narrative descriptions (locally served)
-  - Ollama integration for enhanced flavor text
+  - Ollama integration described above; prompts live under `lib/dungeon/services/` (`DescriptionService`, `OllamaClient`)
 
 - 📊 **Game data in code**
   - Monsters and special (magic) items are defined in [`lib/dungeon/monster.ex`](lib/dungeon/monster.ex) and [`lib/dungeon/special_item.ex`](lib/dungeon/special_item.ex)
@@ -138,7 +133,7 @@ Now visit [`localhost:4000`](http://localhost:4000) in your browser! 🌐
 | `lib/dungeon/player_stats.ex` | Player character and progression |
 | `lib/dungeon/quest.ex` | Quest system and special item logic |
 | `lib/dungeon/themes.ex` | Map themes and feature spawning |
-| `priv/static/images/` | Tile sprites and UI assets (290+ PNG files) |
+| `priv/static/images/` | Tile sprites and UI assets (hundreds of PNGs) |
 | `priv/static/audio/` | Sound effects for game events |
 | `priv/static/data/` | CSV exports (not read at runtime; see `monster.ex` / `special_item.ex`) |
 | `docs/` | Game rules (`GAME_RULES.md`) and pathfinding notes (`PATHFINDING.md`) |
