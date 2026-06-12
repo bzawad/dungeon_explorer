@@ -362,8 +362,8 @@
       <br />
       Click "Download PNG" to save a high-resolution image (140x140 pixels per tile) perfect for Roll20 or other virtual tabletops.
     </div>
-    
-<!-- Preview Map (visible) -->
+
+    <!-- Preview Map (visible) -->
     <div class="dungeon-container" id="dungeonMap">
       <%= for y <- 0..(@dungeon.height-1) do %>
         <div class="map-row">
@@ -435,8 +435,8 @@
                   >
                   </div>
               <% end %>
-              
-<!-- Foreground elements -->
+
+              <!-- Foreground elements -->
               <%= case tile do %>
                 <% t when t in [:door, :locked_door, :trapped_door, :locked_trapped_door, :secret_door] -> %>
                   <% door_orientation = get_door_orientation(@dungeon.grid, x, y, tile) %>
@@ -453,8 +453,8 @@
                     <% _ -> %>
                       <div class="door-barrier-east"></div>
                   <% end %>
-                  
-<!-- Door icons/overlays -->
+
+                  <!-- Door icons/overlays -->
                   <%= case tile do %>
                     <% :door -> %>
                       <!-- No overlays for regular doors -->
