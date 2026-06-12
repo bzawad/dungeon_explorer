@@ -195,14 +195,13 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
       phx-mounted={JS.focus()}
       phx-hook="ScreenSizeDetector"
     >
-      
-    <!-- Audio Player Hook (invisible) -->
+      <!-- Audio Player Hook (invisible) -->
       <div id="audio-player" phx-hook="AudioPlayer" style="display: none;"></div>
-      
-    <!-- Image Preloader Hook (invisible) -->
+
+      <!-- Image Preloader Hook (invisible) -->
       <div id="image-preloader" phx-hook="ImagePreloader" style="display: none;"></div>
-      
-    <!-- Hamburger Menu Button - Fixed Position Upper Left -->
+
+      <!-- Hamburger Menu Button - Fixed Position Upper Left -->
       <div class="fixed top-4 left-4 z-50">
         <button
           class="btn btn-sm btn-ghost bg-gray-800 hover:bg-gray-700 text-white border-gray-600"
@@ -227,8 +226,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                 {@dungeon.theme} - Level {@dungeon_level}
               </div>
             </div>
-            
-    <!-- Desktop Game Controls - Hamburger Menu -->
+
+            <!-- Desktop Game Controls - Hamburger Menu -->
             <%= if @show_game_controls do %>
               <div class="bg-gray-800 rounded-lg p-2 mb-2">
                 <!-- Header with title and close button -->
@@ -251,8 +250,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   >
                     <img src="/images/reset.png" alt="New" class="w-8 h-8 object-contain" />
                   </button>
-                  
-    <!-- Fog Button -->
+
+                  <!-- Fog Button -->
                   <button
                     class="btn btn-secondary h-12 flex items-center justify-center"
                     phx-click={JS.push("toggle_fog") |> JS.focus(to: "#dungeon-map")}
@@ -266,8 +265,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                           "<img src='/images/eye.png' alt='No Fog' class='w-8 h-8 object-contain' />"
                         )}
                   </button>
-                  
-    <!-- Print Button -->
+
+                  <!-- Print Button -->
                   <button
                     phx-click="open_print"
                     class="btn btn-info h-12 flex items-center justify-center"
@@ -275,8 +274,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   >
                     <img src="/images/printer.png" alt="Print" class="w-8 h-8 object-contain" />
                   </button>
-                  
-    <!-- Download PNG Button -->
+
+                  <!-- Download PNG Button -->
                   <button
                     phx-click="open_download_png"
                     class="btn btn-success h-12 flex items-center justify-center"
@@ -287,8 +286,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                 </div>
               </div>
             <% end %>
-            
-    <!-- Desktop Character Dashboard - New Layout -->
+
+            <!-- Desktop Character Dashboard - New Layout -->
             <div class="bg-gray-800 rounded-lg p-4 character-dashboard">
               <!-- Player Stats - New Layout -->
               <div>
@@ -330,8 +329,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                       </div>
                     </div>
                   </div>
-                  
-    <!-- Torch (conditionally rendered) -->
+
+                  <!-- Torch (conditionally rendered) -->
                   <%= if @dungeon.fog_type != "daylight" do %>
                     <div class="p-2 bg-gray-700 rounded">
                       <div class="flex justify-between items-center">
@@ -354,8 +353,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   <% end %>
                 </div>
-                
-    <!-- Healing Potion -->
+
+                <!-- Healing Potion -->
                 <div class="p-2 bg-gray-700 rounded mb-2">
                   <div class="flex justify-between items-center">
                     <div class="flex items-center">
@@ -377,8 +376,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </button>
                   </div>
                 </div>
-                
-    <!-- Level & XP (Combined) -->
+
+                <!-- Level & XP (Combined) -->
                 <div class="mb-2 p-2 bg-gray-700 rounded">
                   <div class="flex justify-between items-center mb-2">
                     <div class="flex items-center">
@@ -405,8 +404,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     {next_level_xp} XP to next level
                   </div>
                 </div>
-                
-    <!-- Armor Class | Attack Bonus -->
+
+                <!-- Armor Class | Attack Bonus -->
                 <div class="grid grid-cols-2 gap-2 mb-2">
                   <!-- Armor Class -->
                   <div class="p-2 bg-gray-700 rounded">
@@ -422,8 +421,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                       <span class="text-sm text-blue-400">{@armor_class}</span>
                     </div>
                   </div>
-                  
-    <!-- Attack Bonus -->
+
+                  <!-- Attack Bonus -->
                   <div class="p-2 bg-gray-700 rounded">
                     <div class="flex justify-between items-center">
                       <div class="flex items-center">
@@ -438,8 +437,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   </div>
                 </div>
-                
-    <!-- Weapon | Damage -->
+
+                <!-- Weapon | Damage -->
                 <div class="grid grid-cols-2 gap-2 mb-2">
                   <!-- Weapon -->
                   <div class="p-2 bg-gray-700 rounded">
@@ -452,8 +451,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                       <span class="text-sm text-white">{String.slice(@player_weapon, 0, 10)}</span>
                     </div>
                   </div>
-                  
-    <!-- Damage -->
+
+                  <!-- Damage -->
                   <div class="p-2 bg-gray-700 rounded">
                     <div class="flex justify-between items-center">
                       <img
@@ -465,8 +464,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   </div>
                 </div>
-                
-    <!-- Gold | Inventory -->
+
+                <!-- Gold | Inventory -->
                 <div class="grid grid-cols-2 gap-2 mb-2">
                   <!-- Gold -->
                   <div class="p-2 bg-gray-700 rounded">
@@ -479,8 +478,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                       <span class="text-sm text-yellow-400">{@player_gold} gp</span>
                     </div>
                   </div>
-                  
-    <!-- Inventory -->
+
+                  <!-- Inventory -->
                   <%= if length(@special_items) > 0 do %>
                     <div
                       class="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer transition-colors"
@@ -513,8 +512,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   <% end %>
                 </div>
-                
-    <!-- Rumors | Achievements -->
+
+                <!-- Rumors | Achievements -->
                 <div class="grid grid-cols-2 gap-2 mb-2">
                   <!-- Rumors -->
                   <%= if length(@rumors) > 0 do %>
@@ -548,8 +547,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                       </div>
                     </div>
                   <% end %>
-                  
-    <!-- Achievements -->
+
+                  <!-- Achievements -->
                   <%= if length(@achievements) > 0 do %>
                     <div
                       class="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer transition-colors"
@@ -582,8 +581,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   <% end %>
                 </div>
-                
-    <!-- Alignment -->
+
+                <!-- Alignment -->
                 <div class="p-2 bg-gray-700 rounded">
                   <div class="flex justify-between items-center">
                     <div class="flex items-center">
@@ -608,8 +607,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
               </div>
             </div>
           </div>
-          
-    <!-- Main Game Area -->
+
+          <!-- Main Game Area -->
           <div class="flex-1">
             <!-- Title - Hidden on large screens (shown in sidebar), visible on small screens -->
             <div class="lg:hidden mb-4 text-center">
@@ -617,8 +616,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                 {@dungeon.theme} - Level {@dungeon_level}
               </div>
             </div>
-            
-    <!-- Mobile Game Controls - Hamburger Menu -->
+
+            <!-- Mobile Game Controls - Hamburger Menu -->
             <%= if @show_game_controls do %>
               <div class="lg:hidden mb-4">
                 <div class="bg-gray-800 rounded-lg p-2">
@@ -642,8 +641,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     >
                       <img src="/images/reset.png" alt="New" class="w-8 h-8 object-contain" />
                     </button>
-                    
-    <!-- Fog Button -->
+
+                    <!-- Fog Button -->
                     <button
                       class="btn btn-secondary h-12 flex items-center justify-center"
                       phx-click={JS.push("toggle_fog") |> JS.focus(to: "#dungeon-map")}
@@ -659,8 +658,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                             "<img src='/images/eye.png' alt='No Fog' class='w-8 h-8 object-contain' />"
                           )}
                     </button>
-                    
-    <!-- Print Button -->
+
+                    <!-- Print Button -->
                     <button
                       phx-click="open_print"
                       class="btn btn-info h-12 flex items-center justify-center"
@@ -668,8 +667,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     >
                       <img src="/images/printer.png" alt="Print" class="w-8 h-8 object-contain" />
                     </button>
-                    
-    <!-- Download PNG Button -->
+
+                    <!-- Download PNG Button -->
                     <button
                       phx-click="open_download_png"
                       class="btn btn-success h-12 flex items-center justify-center"
@@ -681,8 +680,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                 </div>
               </div>
             <% end %>
-            
-    <!-- Map Container - Conditionally shown on mobile -->
+
+            <!-- Map Container - Conditionally shown on mobile -->
             <%= if @show_map_mobile or @screen_size != :mobile do %>
               <div
                 id="dungeon-grid"
@@ -745,8 +744,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                             style={Renderer.get_tile_background_style(tile, {x, y}, @dungeon)}
                           >
                           </div>
-                          
-    <!-- Fog overlay -->
+
+                          <!-- Fog overlay -->
                           <div class={
                           "absolute inset-0 z-10 " <>
                           Renderer.fog_opacity_class(@dungeon.fog_type)
@@ -1799,8 +1798,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                               </div>
                           <% end %>
                         <% end %>
-                        
-    <!-- Player icon overlay -->
+
+                        <!-- Player icon overlay -->
                         <%= if @player_position == {x, y} and revealed do %>
                           <div
                             class="absolute inset-0 z-30 player-token"
@@ -1889,8 +1888,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                 <% end %>
               </div>
             <% end %>
-            
-    <!-- Mobile Dashboard Stats - Hidden on large screens -->
+
+            <!-- Mobile Dashboard Stats - Hidden on large screens -->
             <div class="lg:hidden mt-4 character-dashboard">
               <div class="grid grid-cols-3 gap-2">
                 <!-- Map Toggle -->
@@ -1910,8 +1909,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   </button>
                 </div>
-                
-    <!-- Torch -->
+
+                <!-- Torch -->
                 <div class="p-2 bg-gray-700 rounded">
                   <div class="flex justify-between items-center">
                     <img
@@ -1929,8 +1928,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   </div>
                 </div>
-                
-    <!-- Hit Points -->
+
+                <!-- Hit Points -->
                 <div class="p-2 bg-gray-700 rounded">
                   <div class="flex justify-between items-center">
                     <div class="flex items-center">
@@ -1968,8 +1967,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   </div>
                 </div>
               </div>
-              
-    <!-- Level & XP (Combined) -->
+
+              <!-- Level & XP (Combined) -->
               <div class="mt-2 p-2 bg-gray-700 rounded">
                 <div class="flex justify-between items-center mb-2">
                   <div class="flex items-center">
@@ -1996,8 +1995,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   {next_level_xp} XP to next level
                 </div>
               </div>
-              
-    <!-- Armor Class | Attack Bonus -->
+
+              <!-- Armor Class | Attack Bonus -->
               <div class="grid grid-cols-2 gap-2 mt-2">
                 <!-- Armor Class -->
                 <div class="p-2 bg-gray-700 rounded">
@@ -2013,8 +2012,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     <span class="text-sm text-blue-400">{@armor_class}</span>
                   </div>
                 </div>
-                
-    <!-- Attack Bonus -->
+
+                <!-- Attack Bonus -->
                 <div class="p-2 bg-gray-700 rounded">
                   <div class="flex justify-between items-center">
                     <div class="flex items-center">
@@ -2029,8 +2028,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   </div>
                 </div>
               </div>
-              
-    <!-- Weapon | Damage -->
+
+              <!-- Weapon | Damage -->
               <div class="grid grid-cols-2 gap-2 mt-2">
                 <!-- Weapon -->
                 <div class="p-2 bg-gray-700 rounded">
@@ -2043,8 +2042,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     <span class="text-sm text-white">{String.slice(@player_weapon, 0, 10)}</span>
                   </div>
                 </div>
-                
-    <!-- Damage -->
+
+                <!-- Damage -->
                 <div class="p-2 bg-gray-700 rounded">
                   <div class="flex justify-between items-center">
                     <img
@@ -2056,8 +2055,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   </div>
                 </div>
               </div>
-              
-    <!-- Gold | Inventory -->
+
+              <!-- Gold | Inventory -->
               <div class="grid grid-cols-2 gap-2 mt-2">
                 <!-- Gold -->
                 <div class="p-2 bg-gray-700 rounded">
@@ -2066,8 +2065,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     <span class="text-sm text-yellow-400">{@player_gold} gp</span>
                   </div>
                 </div>
-                
-    <!-- Inventory -->
+
+                <!-- Inventory -->
                 <%= if length(@special_items) > 0 do %>
                   <div
                     class="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer transition-colors"
@@ -2100,8 +2099,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   </div>
                 <% end %>
               </div>
-              
-    <!-- Rumors | Achievements -->
+
+              <!-- Rumors | Achievements -->
               <div class="grid grid-cols-2 gap-2 mt-2">
                 <!-- Rumors -->
                 <%= if length(@rumors) > 0 do %>
@@ -2135,8 +2134,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                     </div>
                   </div>
                 <% end %>
-                
-    <!-- Achievements -->
+
+                <!-- Achievements -->
                 <%= if length(@achievements) > 0 do %>
                   <div
                     class="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer transition-colors"
@@ -2169,8 +2168,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   </div>
                 <% end %>
               </div>
-              
-    <!-- Alignment -->
+
+              <!-- Alignment -->
               <div class="mt-2 p-2 bg-gray-700 rounded">
                 <div class="flex justify-between items-center">
                   <div class="flex items-center">
@@ -2192,8 +2191,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                   </div>
                 </div>
               </div>
-              
-    <!-- Healing Potion button if available -->
+
+              <!-- Healing Potion button if available -->
               <%= if @healing_potion_count > 0 do %>
                 <div class="mt-2 p-2 bg-gray-700 rounded">
                   <div class="flex justify-between items-center">
