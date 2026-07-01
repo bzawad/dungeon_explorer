@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Read versions from .tool-versions
         id: versions
@@ -18,8 +18,15 @@ jobs:
           ELIXIR_LINE=$(grep '^elixir ' .tool-versions)
           ELIXIR_VERSION=$(echo "$ELIXIR_LINE" | cut -d' ' -f2 | cut -d'-' -f1)
           OTP_VERSION=$(echo "$ELIXIR_LINE" | cut -d' ' -f2 | sed 's/.*otp-//')
+          NODE_VERSION=$(grep '^nodejs ' .tool-versions | cut -d' ' -f2)
           echo "elixir=$ELIXIR_VERSION" >> $GITHUB_OUTPUT
           echo "otp=$OTP_VERSION" >> $GITHUB_OUTPUT
+          echo "node=$NODE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.versions.outputs.node }}
 
       - name: Set up Elixir and Erlang
         uses: erlef/setup-beam@v1
@@ -46,7 +53,7 @@ jobs:
       MIX_ENV: test
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Read versions from .tool-versions
         id: versions
@@ -54,8 +61,15 @@ jobs:
           ELIXIR_LINE=$(grep '^elixir ' .tool-versions)
           ELIXIR_VERSION=$(echo "$ELIXIR_LINE" | cut -d' ' -f2 | cut -d'-' -f1)
           OTP_VERSION=$(echo "$ELIXIR_LINE" | cut -d' ' -f2 | sed 's/.*otp-//')
+          NODE_VERSION=$(grep '^nodejs ' .tool-versions | cut -d' ' -f2)
           echo "elixir=$ELIXIR_VERSION" >> $GITHUB_OUTPUT
           echo "otp=$OTP_VERSION" >> $GITHUB_OUTPUT
+          echo "node=$NODE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.versions.outputs.node }}
 
       - name: Set up Elixir and Erlang
         uses: erlef/setup-beam@v1
@@ -76,7 +90,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
