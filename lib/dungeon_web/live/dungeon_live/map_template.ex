@@ -763,29 +763,23 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
 
                           <%= case tile do %>
                             <% {:room_label, room_number} -> %>
-                              <%= if revealed do %>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                  <div class="bg-black bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
-                                    {room_number}
-                                  </div>
+                              <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="bg-black bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
+                                  {room_number}
                                 </div>
-                              <% end %>
+                              </div>
                             <% {:corridor_label, corridor_number} -> %>
-                              <%= if revealed do %>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                  <div class="bg-black bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
-                                    {corridor_number}
-                                  </div>
+                              <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="bg-black bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
+                                  {corridor_number}
                                 </div>
-                              <% end %>
+                              </div>
                             <% {:area_label, area_number} -> %>
-                              <%= if revealed do %>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                  <div class="bg-black bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
-                                    {area_number}
-                                  </div>
+                              <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="bg-black bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
+                                  {area_number}
                                 </div>
-                              <% end %>
+                              </div>
                             <% {:encounter, _encounter_label, monster} -> %>
                               <% monster_size_class = get_monster_image_size(monster) %>
                               <div class={get_monster_container_classes(monster)}>
@@ -1782,13 +1776,11 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
                             <% :corridor -> %>
                               <!-- Corridor tiles are handled by background texture only -->
                             <% {:building_label, building_number} -> %>
-                              <%= if revealed do %>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                  <div class="bg-amber-900 bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
-                                    {building_number}
-                                  </div>
+                              <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="bg-amber-900 bg-opacity-60 px-2 py-1 rounded text-[14px] font-bold text-white">
+                                  {building_number}
                                 </div>
-                              <% end %>
+                              </div>
                             <% _ -> %>
                               <!-- Fallback for unhandled tile types - show a placeholder -->
                               <div class="absolute inset-0 flex items-center justify-center">

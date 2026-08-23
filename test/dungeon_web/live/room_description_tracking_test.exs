@@ -118,8 +118,7 @@ defmodule DungeonWeb.RoomDescriptionTrackingTest do
         theme: socket_with_r1.assigns.dungeon.theme,
         level: socket_with_r1.assigns.dungeon_level,
         room_number: "R2",
-        previous_room_description:
-          socket_with_r1.assigns.current_room_description || "This is the first room entered."
+        previous_room_description: socket_with_r1.assigns.current_room_description
       }
 
       assert actual_context == expected_context
@@ -146,8 +145,7 @@ defmodule DungeonWeb.RoomDescriptionTrackingTest do
         theme: socket_with_r2.assigns.dungeon.theme,
         level: socket_with_r2.assigns.dungeon_level,
         room_number: "R3",
-        previous_room_description:
-          socket_with_r2.assigns.current_room_description || "This is the first room entered."
+        previous_room_description: socket_with_r2.assigns.current_room_description
       }
 
       assert actual_r3_context == expected_r3_context
@@ -179,9 +177,7 @@ defmodule DungeonWeb.RoomDescriptionTrackingTest do
         theme: socket_with_current_room.assigns.dungeon.theme,
         level: socket_with_current_room.assigns.dungeon_level,
         corridor_number: "C1",
-        last_room_description:
-          socket_with_current_room.assigns.current_room_description ||
-            "No previous room has been entered yet."
+        last_room_description: socket_with_current_room.assigns.current_room_description
       }
 
       assert actual_context == expected_context

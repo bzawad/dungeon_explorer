@@ -3,8 +3,6 @@ defmodule DungeonWeb.DungeonLive.MapTransitionSystem do
   Handles map transition logic for stair navigation, waypoint travel, and map link transitions.
   """
 
-  require Logger
-
   alias Dungeon.{Generator, MapLinkSystem}
 
   alias DungeonWeb.DungeonLive.{
