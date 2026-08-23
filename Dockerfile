@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM hexpm/elixir:1.15.7-erlang-26.2.1-debian-bullseye-20231009 AS build
+FROM hexpm/elixir:1.20.2-erlang-29.0.4-debian-bullseye-20260713 AS build
 
 # Ollama model to pull at container start (use "none" to skip). Example: llama3:latest
 ARG OLLAMA_MODEL=none

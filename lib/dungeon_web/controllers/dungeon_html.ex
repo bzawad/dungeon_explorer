@@ -166,11 +166,6 @@ defmodule DungeonWeb.DungeonHTML do
     tile_img_tag(feature_image_path, actual_feature_name)
   end
 
-  defp get_labeled_tile_symbol({:special_feature, _label}) do
-    # Fallback for two-element tuples (legacy format)
-    tile_img_tag("/images/special_features/barrel.png", "Special Feature")
-  end
-
   defp get_labeled_tile_symbol({:room_label, room_number}), do: to_string(room_number)
   defp get_labeled_tile_symbol({:corridor_label, corridor_number}), do: to_string(corridor_number)
   defp get_labeled_tile_symbol({:area_label, area_number}), do: to_string(area_number)

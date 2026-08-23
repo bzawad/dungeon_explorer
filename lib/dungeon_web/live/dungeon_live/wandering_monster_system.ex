@@ -64,11 +64,8 @@ defmodule DungeonWeb.DungeonLive.WanderingMonsterSystem do
         Monster.get_random_monster_for_theme_with_fog_type(theme, map_level, player_level)
 
       _ ->
-        # Fallback to old method if no theme data
-        theme_monsters =
-          if dungeon && dungeon.theme_data, do: Map.get(dungeon.theme_data, :monsters), else: nil
-
-        Monster.get_random_monster_for_theme(theme_monsters, player_level)
+        # Fallback when theme_data is missing or not a map
+        Monster.get_random_monster_for_theme(nil, player_level)
     end
   end
 
