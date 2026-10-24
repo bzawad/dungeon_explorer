@@ -62,7 +62,7 @@ This project was created from scratch (the hard way), with AI-assisted code gene
 
 ### ✅ Prerequisites
 
-- **Elixir** `~> 1.14` (see [`mix.exs`](mix.exs); the repo [`.tool-versions`](.tool-versions) pins newer Erlang/Elixir for asdf-based local dev)
+- **Elixir** `~> 1.20` (see [`mix.exs`](mix.exs); [`.tool-versions`](.tool-versions) pins Elixir/Erlang/Node for asdf-based local dev)
 - **Phoenix** `~> 1.8` (resolved in [`mix.lock`](mix.lock), e.g. 1.8.x)
 - **Node.js** — for npm dependencies under `assets/` (Heroicons, DaisyUI, Howler); CSS/JS bundling uses Mix tasks (`tailwind`, `esbuild`)
 - **No database** — the app supervision tree does not start Ecto or a repo
