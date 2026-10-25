@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM hexpm/elixir:1.20.2-erlang-29.0.4-debian-bullseye-20260713 AS build
+FROM hexpm/elixir:1.20.4-erlang-29.1.2-debian-trixie-20261020 AS build
 
 # Ollama model to pull at container start (use "none" to skip). Example: llama3:latest
 ARG OLLAMA_MODEL=none
@@ -40,9 +40,9 @@ RUN MIX_ENV=prod mix phx.digest
 RUN MIX_ENV=prod mix release
 
 # Stage 2: Release
-FROM debian:bullseye-slim
+FROM debian:trixie-slim
 
-RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales curl zstd \
+RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses6 locales curl zstd ca-certificates \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
