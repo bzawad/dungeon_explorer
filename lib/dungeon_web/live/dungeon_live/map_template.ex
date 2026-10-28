@@ -189,7 +189,7 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
     ~H"""
     <div
       id="dungeon-map"
-      class="hero min-h-[80vh] bg-base-100 dark:bg-black"
+      class="hero flex min-h-[80vh] w-full flex-col bg-base-100 dark:bg-black lg:min-h-screen"
       tabindex="0"
       phx-keydown="keydown"
       phx-mounted={JS.focus()}
@@ -216,10 +216,10 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
         </button>
       </div>
 
-      <div class="hero-content text-center">
-        <div class="flex flex-col lg:flex-row items-start justify-center gap-6">
+      <div class="hero-content flex min-h-0 w-full max-w-none flex-1 flex-col px-4 py-4 text-center lg:min-h-0 lg:px-0 lg:py-0">
+        <div class="flex w-full min-h-0 flex-col gap-6 lg:flex-1 lg:flex-row lg:items-stretch lg:justify-start">
           <!-- Left Sidebar (Controls + Character Dashboard) - Hidden on small screens -->
-          <div class="hidden lg:block w-64 shrink-0 space-y-4">
+          <div class="hidden max-h-[100dvh] space-y-4 overflow-y-auto lg:block lg:w-64 lg:shrink-0 lg:self-start">
             <!-- Desktop Title -->
             <div class="text-center mb-4">
               <div class="text-lg font-bold text-white">
@@ -607,9 +607,8 @@ defmodule DungeonWeb.DungeonLive.MapTemplate do
               </div>
             </div>
           </div>
-
           <!-- Main Game Area -->
-          <div class="flex-1">
+          <div class="flex min-h-0 w-full min-w-0 flex-1 flex-col lg:min-h-0">
             <!-- Title - Hidden on large screens (shown in sidebar), visible on small screens -->
             <div class="lg:hidden mb-4 text-center">
               <div class="text-lg font-bold text-white">
