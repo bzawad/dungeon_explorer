@@ -906,6 +906,24 @@ defmodule Dungeon.Generator.Features do
   end
 
   @doc """
+  Rows for Dungeoneers `dungeon/data/special_feature_registry.json` (name, rarity, image, size).
+
+  Written by `tools/export_dungeoneers_data.exs registry` — keeps map art in sync with Explorer.
+  """
+  def dungeoneers_special_feature_registry_rows do
+    @special_feature_registry
+    |> Enum.map(fn {name, data} ->
+      %{
+        "name" => name,
+        "rarity" => data.rarity |> Atom.to_string(),
+        "image" => Map.get(data, :image, "barrel.png"),
+        "size" => Map.get(data, :size, 1.0) / 1.0
+      }
+    end)
+    |> Enum.sort_by(& &1["name"])
+  end
+
+  @doc """
   Get the image path for a special feature
   """
   def get_special_feature_image_path(feature_name) do

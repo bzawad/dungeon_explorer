@@ -2649,32 +2649,37 @@ defmodule DungeonWeb.DungeonLive do
   end
 
   def handle_info({:show_encounter_dialog_for_movement, position, icon, message, monster}, socket) do
-    # Determine dialog type based on monster role and guard hostility state
-    should_show_npc_dialog =
-      NpcQuestSystem.npc_dialog_encounter?(
-        monster,
-        socket.assigns.guards_hostile,
-        socket.assigns.player_alignment
-      )
+    # Async `send(self(), ...)` from `Movement.show_encounter_dialog_for_movement/2` can be delivered
+    # after combat has started or ended; ignore stale offers so the encounter modal cannot reappear
+    # on top of combat or after victory.
+    tile = Map.get(socket.assigns.dungeon.grid, position)
 
-    if should_show_npc_dialog do
-      # Show NPC dialog directly in main LiveView context
-      socket =
-        socket
-        |> assign(:show_npc_dialog, true)
-        |> assign(:npc_dialog_icon, icon)
-        |> assign(:npc_dialog_message, message)
-        |> assign(:current_encounter_position, position)
-
+    if socket.assigns.show_combat_dialog or socket.assigns.show_victory_dialog or
+         socket.assigns.show_death_dialog or socket.assigns.show_evade_dialog or
+         not EncounterSystem.encounter_tile?(tile) do
       {:noreply, socket}
     else
-      # Show regular encounter dialog
+      should_show_npc_dialog =
+        NpcQuestSystem.npc_dialog_encounter?(
+          monster,
+          socket.assigns.guards_hostile,
+          socket.assigns.player_alignment
+        )
+
       socket =
-        socket
-        |> assign(:show_encounter_dialog, true)
-        |> assign(:encounter_icon, icon)
-        |> assign(:encounter_message, message)
-        |> assign(:current_encounter_position, position)
+        if should_show_npc_dialog do
+          socket
+          |> assign(:show_npc_dialog, true)
+          |> assign(:npc_dialog_icon, icon)
+          |> assign(:npc_dialog_message, message)
+          |> assign(:current_encounter_position, position)
+        else
+          socket
+          |> assign(:show_encounter_dialog, true)
+          |> assign(:encounter_icon, icon)
+          |> assign(:encounter_message, message)
+          |> assign(:current_encounter_position, position)
+        end
 
       {:noreply, socket}
     end
